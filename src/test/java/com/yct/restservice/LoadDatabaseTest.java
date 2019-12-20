@@ -26,6 +26,6 @@ public class LoadDatabaseTest {
   @Test
   void initDatabase() {
     CommandLineRunner commandLineRunner = loadDatabase.initDatabase(repository);
-    assertThat(commandLineRunner.toString(), is(notNullValue()));
+    assertThat(commandLineRunner, is(notNullValue()));
   }
 }
