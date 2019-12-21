@@ -14,9 +14,12 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 class EmployeeController {
 
   private final EmployeeRepository repository;
+  private final EmployeeRepresentationModelAssembler assembler;
 
-  EmployeeController(EmployeeRepository repository) {
+  EmployeeController(EmployeeRepository repository,
+                     EmployeeRepresentationModelAssembler assembler) {
     this.repository = repository;
+    this.assembler = assembler;
   }
 
   @GetMapping("/employees")
@@ -43,9 +46,10 @@ class EmployeeController {
     Employee employee = repository.findById(id)
         .orElseThrow(() -> new EmployeeNotFoundException(id));
 
-    return new EntityModel<>(employee,
-        linkTo(methodOn(EmployeeController.class).one(id)).withSelfRel(),
-        linkTo(methodOn(EmployeeController.class).all()).withRel("employees"));
+    return assembler.toModel(employee);
+//    return new EntityModel<>(employee,
+//        linkTo(methodOn(EmployeeController.class).one(id)).withSelfRel(),
+//        linkTo(methodOn(EmployeeController.class).all()).withRel("employees"));
   }
 
   @PutMapping("/employees/{id}")
