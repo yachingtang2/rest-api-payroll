@@ -30,7 +30,7 @@ public class EmployeeControllerTest {
   void getAllEmployees() throws Exception {
     mvc.perform(MockMvcRequestBuilders.get("/employees").accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
-        .andExpect(content().string("[{\"id\":1,\"name\":\"Test1 Test2\",\"role\":\"manager\"},{\"id\":2,\"name\":\"Test3 Test4\",\"role\":\"associate\"}]"));
+        .andExpect(content().string("{\"_embedded\":{\"employeeList\":[{\"id\":1,\"name\":\"Test1 Test2\",\"role\":\"manager\",\"_links\":{\"self\":{\"href\":\"http://localhost/employees/1\"},\"employees\":{\"href\":\"http://localhost/employees\"}}},{\"id\":2,\"name\":\"Test3 Test4\",\"role\":\"associate\",\"_links\":{\"self\":{\"href\":\"http://localhost/employees/2\"},\"employees\":{\"href\":\"http://localhost/employees\"}}}]},\"_links\":{\"self\":{\"href\":\"http://localhost/employees\"}}}"));
   }
 
   @Test
@@ -42,7 +42,7 @@ public class EmployeeControllerTest {
         .andExpect(status().isOk())
         .andExpect(content().string("{\"id\":3,\"name\":\"Test5 Test6\",\"role\":\"policeman\"}"));
 
-  }
+}
 
   private String buildRequestJson(Employee employee) throws JsonProcessingException {
     ObjectMapper mapper = new ObjectMapper();
@@ -55,7 +55,7 @@ public class EmployeeControllerTest {
   void getEmployeeFound() throws Exception {
     mvc.perform(MockMvcRequestBuilders.get("/employees/1"))
         .andExpect(status().isOk())
-        .andExpect(content().string("{\"id\":1,\"name\":\"Test1 Test2\",\"role\":\"manager\"}"));
+        .andExpect(content().string("{\"id\":1,\"name\":\"Test1 Test2\",\"role\":\"manager\",\"_links\":{\"self\":{\"href\":\"http://localhost/employees/1\"},\"employees\":{\"href\":\"http://localhost/employees\"}}}"));
   }
 
   @Test
