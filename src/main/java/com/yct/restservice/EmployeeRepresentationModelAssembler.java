@@ -15,5 +15,5 @@ public class EmployeeRepresentationModelAssembler implements RepresentationModel
     return new EntityModel<>(employee,
         linkTo(methodOn(EmployeeController.class).one(employee.getId())).withSelfRel(),
         linkTo(methodOn(EmployeeController.class).all()).withRel("employees"));
-}
+  }
 }

@@ -16,7 +16,9 @@ public class LoadDatabaseTest {
   private LoadDatabase loadDatabase;
 
   @Mock
-  private EmployeeRepository repository;
+  private EmployeeRepository employeeRepository;
+  @Mock
+  private OrderRepository orderRepository;
 
   @BeforeEach
   void setUp() {
@@ -25,7 +27,7 @@ public class LoadDatabaseTest {
 
   @Test
   void initDatabase() {
-    CommandLineRunner commandLineRunner = loadDatabase.initDatabase(repository);
+    CommandLineRunner commandLineRunner = loadDatabase.initDatabase(employeeRepository, orderRepository);
     assertThat(commandLineRunner, is(notNullValue()));
   }
 }

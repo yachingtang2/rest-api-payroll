@@ -2,8 +2,10 @@ package com.yct.restservice;
 
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,20 +27,20 @@ class EmployeeController {
   @GetMapping("/employees")
   CollectionModel<EntityModel<Employee>> all() {
     List<EntityModel<Employee>> employees = repository.findAll().stream()
-        .map(employee -> new EntityModel<>(employee,
-            linkTo(methodOn(EmployeeController.class).one(employee.getId())).withSelfRel(),
-            linkTo(methodOn(EmployeeController.class).all()).withRel("employees")))
+        .map(assembler::toModel)
         .collect(Collectors.toList());
 
     return new CollectionModel<>(employees, linkTo(methodOn(EmployeeController.class).all()).withSelfRel());
   }
 
   @PostMapping("/employees")
-  Employee newEmployee(@RequestBody Employee newEmployee) {
-    return repository.save(newEmployee);
-  }
+  ResponseEntity<?> newEmployee(@RequestBody Employee newEmployee) {
 
-  // Single item
+    EntityModel<Employee> employeeEntityModel = assembler.toModel(repository.save(newEmployee));
+
+    return ResponseEntity.created(URI.create(employeeEntityModel.getLinks("self").get(0).getHref()))
+                         .body(employeeEntityModel);
+  }
 
   @GetMapping("/employees/{id}")
   EntityModel<Employee> one(@PathVariable Long id) {
@@ -47,15 +49,12 @@ class EmployeeController {
         .orElseThrow(() -> new EmployeeNotFoundException(id));
 
     return assembler.toModel(employee);
-//    return new EntityModel<>(employee,
-//        linkTo(methodOn(EmployeeController.class).one(id)).withSelfRel(),
-//        linkTo(methodOn(EmployeeController.class).all()).withRel("employees"));
   }
 
   @PutMapping("/employees/{id}")
-  Employee replaceEmployee(@RequestBody Employee newEmployee, @PathVariable Long id) {
+  ResponseEntity<?> replaceEmployee(@RequestBody Employee newEmployee, @PathVariable Long id) {
 
-    return repository.findById(id)
+    Employee updatedEmployee = repository.findById(id)
         .map(employee -> {
           employee.setName(newEmployee.getName());
           employee.setRole(newEmployee.getRole());
@@ -65,10 +64,17 @@ class EmployeeController {
           newEmployee.setId(id);
           return repository.save(newEmployee);
         });
+
+    EntityModel<Employee> employeeEntityModel = assembler.toModel(updatedEmployee);
+
+    return ResponseEntity.created(URI.create(employeeEntityModel.getLinks("self").get(0).getHref()))
+                         .body(employeeEntityModel);
   }
 
   @DeleteMapping("/employees/{id}")
-  void deleteEmployee(@PathVariable Long id) {
+  ResponseEntity<?> deleteEmployee(@PathVariable Long id) {
     repository.deleteById(id);
+
+    return ResponseEntity.noContent().build();
   }
 }
