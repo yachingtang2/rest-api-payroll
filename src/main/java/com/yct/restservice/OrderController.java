@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,6 +34,16 @@ class OrderController {
     return new CollectionModel<>(orders, linkTo(methodOn(OrderController.class).all()).withSelfRel());
   }
 
+  @PostMapping("/orders")
+  ResponseEntity<?> newOrder(@RequestBody Order order) {
+
+    order.setStatus(Status.IN_PROGRESS);
+    EntityModel<Order> orderEntityModel = assembler.toModel(repository.save(order));
+
+    return ResponseEntity.created(URI.create(orderEntityModel.getLinks("self").get(0).getHref()))
+            .body(orderEntityModel);
+  }
+
   @GetMapping("/orders/{id}")
   EntityModel<Order> one(@PathVariable Long id) {
 
@@ -42,18 +53,8 @@ class OrderController {
     return assembler.toModel(order);
   }
 
-  @PostMapping("/orders")
-  ResponseEntity<?> newOrder(@RequestBody Order order) {
-    order.setStatus(Status.IN_PROGRESS);
-    Order newOrder = repository.save(order);
-    EntityModel<Order> orderEntityModel = assembler.toModel(repository.save(newOrder));
-
-    return ResponseEntity.created(linkTo(methodOn(OrderController.class).one(newOrder.getId())).toUri())
-        .body(orderEntityModel);
-  }
-
   @DeleteMapping("/orders/{id}/cancel")
-  public ResponseEntity<?> cancel(@PathVariable Long id) {
+  ResponseEntity<?> cancel(@PathVariable Long id) {
     Order order = repository.findById(id).orElseThrow(() -> new OrderNotFoundException(id));
     if(order.getStatus() == Status.IN_PROGRESS) {
       order.setStatus(Status.CANCELLED);
@@ -66,7 +67,7 @@ class OrderController {
   }
 
   @PutMapping("/orders/{id}/complete")
-  public ResponseEntity<?> complete(@PathVariable Long id) {
+  ResponseEntity<?> complete(@PathVariable Long id) {
     Order order = repository.findById(id).orElseThrow(() -> new OrderNotFoundException(id));
 
     if(order.getStatus() == Status.IN_PROGRESS) {

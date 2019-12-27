@@ -9,11 +9,12 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Component
 class OrderRepresentationModelAssembler implements RepresentationModelAssembler<Order, EntityModel<Order>> {
+
   @Override
   public EntityModel<Order> toModel(Order order) {
     EntityModel<Order> orderEntityModel = new EntityModel<>(order,
-        linkTo(methodOn(OrderController.class).all()).withRel("orders"),
-        linkTo(methodOn(OrderController.class).one(order.getId())).withSelfRel());
+        linkTo(methodOn(OrderController.class).one(order.getId())).withSelfRel(),
+        linkTo(methodOn(OrderController.class).all()).withRel("orders"));
 
     if(order.getStatus() == Status.IN_PROGRESS) {
       orderEntityModel.add(linkTo(methodOn(OrderController.class).cancel(order.getId())).withRel("cancel"));

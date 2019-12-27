@@ -41,7 +41,7 @@ public class EmployeeControllerTest {
           .contentType(MediaType.APPLICATION_JSON)
           .content(requestJson))
         .andExpect(status().isCreated())
-        .andExpect(content().string("{\"id\":5,\"firstName\":\"Test5\",\"lastName\":\"Test6\",\"name\":\"Test5 Test6\",\"role\":\"policeman\",\"_links\":{\"self\":{\"href\":\"http://localhost/employees/5\"},\"employees\":{\"href\":\"http://localhost/employees\"}}}"));
+        .andExpect(content().string("{\"id\":7,\"firstName\":\"Test5\",\"lastName\":\"Test6\",\"name\":\"Test5 Test6\",\"role\":\"policeman\",\"_links\":{\"self\":{\"href\":\"http://localhost/employees/7\"},\"employees\":{\"href\":\"http://localhost/employees\"}}}"));
   }
 
   static String buildRequestJson(Object object) throws JsonProcessingException {
@@ -85,9 +85,7 @@ public class EmployeeControllerTest {
         .contentType(MediaType.APPLICATION_JSON)
         .content(requestJson))
         .andExpect(status().isCreated())
-        .andExpect(content().string("{\"id\":6,\"firstName\":\"Test77\",\"lastName\":\"Test88\",\"name\":\"Test77 " +
-            "Test88\",\"role\":\"dad\",\"_links\":{\"self\":{\"href\":\"http://localhost/employees/6\"}," +
-            "\"employees\":{\"href\":\"http://localhost/employees\"}}}"));
+        .andExpect(content().string("{\"id\":8,\"firstName\":\"Test77\",\"lastName\":\"Test88\",\"name\":\"Test77 Test88\",\"role\":\"dad\",\"_links\":{\"self\":{\"href\":\"http://localhost/employees/8\"},\"employees\":{\"href\":\"http://localhost/employees\"}}}"));
   }
 
   @Test
