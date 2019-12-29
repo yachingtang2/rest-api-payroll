@@ -20,7 +20,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class EmployeeControllerTest {
+class EmployeeControllerTest {
 
   @Autowired
   private MockMvc mvc;
